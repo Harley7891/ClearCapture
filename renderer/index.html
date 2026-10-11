@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; object-src 'none'; base-uri 'none'">
+  <title>ClearCapture</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-lockup"><span class="brand-mark">CC</span><div><div class="brand-name" data-i18n="brand">ClearCapture</div><div class="brand-subtitle" data-i18n="subtitle">Creator recording workstation</div></div></div>
+      <div class="topbar-actions">
+        <button class="source-pill" id="source-button" data-action="sources" title="Choose source"><span class="status-dot"></span><span id="source-label" data-i18n="noSource">No source selected</span><span class="chevron">⌄</span></button>
+        <button class="icon-button" data-action="settings" data-i18n-title="settings" aria-label="Settings">⚙</button>
+        <label class="locale-select"><span class="sr-only" data-i18n="language">Language</span><select id="language-select" aria-label="Language"></select></label>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="sidebar left-sidebar">
+        <div class="panel-heading"><span data-i18n="scenes">Scenes</span><button class="mini-button" data-action="add-scene" data-i18n-title="addScene" aria-label="Add scene">＋</button></div>
+        <div id="scene-list" class="scene-list"></div>
+        <div class="sidebar-rule"></div>
+        <div class="panel-heading"><span data-i18n="sources">Sources & layers</span><span class="count-badge" id="layer-count">0</span></div>
+        <div class="source-actions"><button class="tool-button" data-action="add-display"><span class="tool-icon">▣</span><span data-i18n="addDisplay">Add screen</span></button><button class="tool-button" data-action="add-camera"><span class="tool-icon">◉</span><span data-i18n="addCamera">Add camera</span></button><button class="tool-button" data-action="add-text"><span class="tool-icon">T</span><span data-i18n="addText">Add text</span></button><button class="tool-button" data-action="add-image"><span class="tool-icon">▧</span><span data-i18n="addImage">Add image</span></button><input id="image-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden></div>
+        <div id="layer-list" class="layer-list"></div>
+        <p class="drag-hint" data-i18n="dragHint">Drag a layer in the preview to reposition it</p>
+      </aside>
+
+      <section class="center-stage">
+        <div class="stage-toolbar"><div class="stage-title"><span class="eyebrow" data-i18n="preview">Preview</span><span class="live-chip"><i></i><span data-i18n="live">LIVE</span></span></div><div class="stage-meta" id="capture-state"><span class="state-dot"></span><span data-i18n="ready">Ready</span></div></div>
+        <div class="preview-frame"><canvas id="preview-canvas" width="1280" height="720"></canvas><div id="preview-empty" class="preview-empty"><div class="empty-orbit">✦</div><strong data-i18n="chooseSource">Choose source</strong><span data-i18n="captureMissing">Choose a screen or window source</span><button class="primary-button small" data-action="sources" data-i18n="chooseSource">Choose source</button></div><div class="preview-badge" id="resolution-badge">1280 × 720</div><div class="safe-area"></div></div>
+        <div class="transport"><div class="transport-time"><span class="transport-status" id="transport-status" data-i18n="ready">Ready</span><span class="timer" id="timer">00:00:00</span></div><div class="transport-actions"><button class="transport-button pause-button" id="pause-button" data-action="pause" disabled><span>Ⅱ</span><span data-i18n="pause">Pause</span></button><button class="record-button" id="record-button" data-action="record"><span class="record-glyph"></span><span data-i18n="record">Record</span></button><button class="transport-button stop-button" id="stop-button" data-action="stop" disabled><span>■</span><span data-i18n="stop">Stop</span></button></div><div class="transport-side"><span class="shortcut-hint" id="shortcut-hint">Ctrl + Shift + R</span><button class="icon-button subtle" data-action="clear-notice" data-i18n-title="clear" aria-label="Clear notice">×</button></div></div>
+        <div id="notice" class="notice" role="status" aria-live="polite" hidden><span class="notice-icon">!</span><span id="notice-text"></span><button data-action="clear-notice" aria-label="Dismiss">×</button></div>
+      </section>
+
+      <aside class="sidebar right-sidebar">
+        <div class="panel-heading"><span data-i18n="selectLayer">Select a layer</span><span class="inspector-tag" id="inspector-type">—</span></div>
+        <div id="inspector" class="inspector"><div class="inspector-empty"><span class="empty-icon">◈</span><span data-i18n="selectLayer">Select a layer</span><small data-i18n="noLayers">This scene has no layers yet</small></div></div>
+        <div class="sidebar-rule"></div>
+        <section class="audio-panel"><div class="panel-heading"><span data-i18n="audio">Audio mixer</span><button class="mini-button" data-action="refresh-devices" data-i18n-title="refresh" aria-label="Refresh">↻</button></div><div class="mixer-row"><div class="mixer-label"><span class="mixer-icon system">⌁</span><div><strong data-i18n="systemAudio">System audio</strong><small id="system-device">—</small></div></div><div class="meter"><i id="system-meter"></i></div><input id="system-gain" class="gain-slider" type="range" min="0" max="2" step="0.01" value="1" aria-label="System audio gain"></div><div class="mixer-row"><div class="mixer-label"><span class="mixer-icon mic">♩</span><div><strong data-i18n="microphone">Microphone</strong><small id="mic-device">—</small></div></div><div class="meter"><i id="mic-meter"></i></div><input id="mic-gain" class="gain-slider" type="range" min="0" max="2" step="0.01" value="1" aria-label="Microphone gain"></div></section>
+        <div class="health-strip"><span><i id="camera-health" class="health-dot"></i><span id="camera-health-label" data-i18n="cameraMissing">Camera not connected</span></span><span><i id="mic-health" class="health-dot"></i><span id="mic-health-label" data-i18n="micMissing">Microphone not connected</span></span></div>
+      </aside>
+    </main>
+
+    <section class="library-dock"><div class="library-heading"><div><span class="eyebrow" data-i18n="library">Local library</span><span id="recording-count" class="count-badge">0</span></div><div class="library-actions"><button class="text-button" data-action="reveal-output" data-i18n="revealOutput">Open output folder</button><button class="icon-button subtle" data-action="refresh-recordings" data-i18n-title="refresh" aria-label="Refresh">↻</button></div></div><div id="recordings-list" class="recordings-list"><div class="library-empty"><span>▤</span><span data-i18n="emptyLibrary">Finished recordings will appear here.</span></div></div></section>
+    <footer class="footer-bar"><span>ClearCapture 0.1</span><span data-i18n="localOnly">All media stays on this computer.</span><span data-i18n="noLive">Live streaming is not enabled.</span></footer>
+  </div>
+
+  <dialog id="source-dialog" class="modal source-modal"><div class="modal-header"><div><span class="eyebrow" data-i18n="capture">Capture</span><h2 data-i18n="sourcePicker">Choose capture source</h2></div><button class="icon-button subtle" data-close-dialog="source-dialog" aria-label="Close">×</button></div><div id="source-grid" class="source-grid"><div class="loading-state" data-i18n="refresh">Loading…</div></div><div class="modal-footer"><span id="source-selection" class="selection-copy" data-i18n="noSource">No source selected</span><div><button class="secondary-button" data-close-dialog="source-dialog" data-i18n="cancel">Cancel</button><button id="use-source" class="primary-button" data-action="use-source" disabled data-i18n="useSource">Use this source</button></div></div></dialog>
+  <dialog id="settings-dialog" class="modal settings-modal"><div class="modal-header"><div><span class="eyebrow" data-i18n="settings">Settings</span><h2 data-i18n="settings">Settings</h2></div><button class="icon-button subtle" data-close-dialog="settings-dialog" aria-label="Close">×</button></div><div class="settings-layout"><nav id="settings-tabs" class="settings-tabs"><button class="active" data-settings-tab="general" data-i18n="general">General</button><button data-settings-tab="video" data-i18n="video">Video</button><button data-settings-tab="audio" data-i18n="audioSettings">Audio</button><button data-settings-tab="output" data-i18n="outputSettings">Output</button><button data-settings-tab="hotkeys" data-i18n="hotkeys">Hotkeys</button></nav><div id="settings-content" class="settings-content"></div></div><div class="modal-footer"><div class="settings-project-actions"><button class="text-button" data-action="export-project" data-i18n="exportProject">Export project</button><button class="text-button" data-action="import-project" data-i18n="importProject">Import project</button></div><div><button class="secondary-button" data-close-dialog="settings-dialog" data-i18n="close">Close</button><button class="primary-button" data-action="save-settings" data-i18n="save">Save settings</button></div></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
