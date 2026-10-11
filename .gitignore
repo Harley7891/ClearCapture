@@ -1,0 +1,7 @@
+node_modules/
+release/
+artifacts/
+.test-profile/
+*.log
+*.partial.webm
+*.partial.mp4
