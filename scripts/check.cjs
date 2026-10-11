@@ -1,0 +1,5 @@
+const fs=require('node:fs');const path=require('node:path');const {execFileSync}=require('node:child_process');
+const root=path.resolve(__dirname,'..');let count=0;
+function walk(dir){for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,entry.name);if(entry.isDirectory())walk(p);else if(/\.(js|mjs|cjs)$/.test(entry.name)){execFileSync(process.execPath,['--check',p],{stdio:'pipe'});count++;}}}
+for(const dir of ['renderer','main','shared','scripts','tests'])walk(path.join(root,dir));
+(async()=>{const {dictionaries}=await import('../renderer/i18n.js');const keys=Object.keys(dictionaries.en).sort();for(const [language,dictionary]of Object.entries(dictionaries)){if(JSON.stringify(Object.keys(dictionary).sort())!==JSON.stringify(keys))throw new Error(`Translation keys differ: ${language}`);}console.log(`Syntax: ${count} modules. Localization: ${Object.keys(dictionaries).length} languages × ${keys.length} keys.`);})().catch(e=>{console.error(e);process.exitCode=1;});
