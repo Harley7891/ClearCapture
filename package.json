@@ -1,0 +1,54 @@
+{
+  "name": "clearcapture-studio",
+  "version": "0.1.0",
+  "description": "An open-source local recording studio for creators",
+  "private": true,
+  "type": "module",
+  "license": "GPL-3.0-only",
+  "author": "ClearCapture contributors",
+  "main": "main/index.cjs",
+  "scripts": {
+    "setup": "node node_modules/electron/install.js",
+    "start": "electron .",
+    "test": "node --test tests/*.test.mjs",
+    "test:e2e": "node scripts/smoke.cjs",
+    "check": "node scripts/check.cjs",
+    "package": "electron-builder --win dir --publish never",
+    "release": "electron-builder --win portable --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.7.0",
+    "electron-builder": "26.15.3",
+    "playwright": "1.64.0"
+  },
+  "build": {
+    "appId": "org.clearcapture.studio",
+    "productName": "ClearCapture",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main/**/*",
+      "shared/**/*",
+      "renderer/**/*",
+      "assets/**/*",
+      "LICENSE",
+      "THIRD_PARTY_NOTICES.md",
+      "package.json"
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        "portable"
+      ],
+      "signExecutable": false
+    },
+    "portable": {
+      "artifactName": "ClearCapture-${version}-Windows-x64.exe"
+    }
+  },
+  "overrides": {
+    "global-agent": "4.1.3"
+  }
+}
